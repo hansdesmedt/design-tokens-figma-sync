@@ -1,33 +1,59 @@
-# Design Tokens Figma Sync
+# Design Tokens Toolkit
 
-Bidirectional synchronization between your codebase and Figma design tokens.
+Complete toolkit for design tokens: sync between codebase and Figma + validate token structure.
 
 ## 🎯 Purpose
 
-Keep your design tokens in perfect sync between code and Figma:
+Complete design tokens workflow:
+
+**Sync (Code ↔ Figma):**
 - **Push colors** from CSS/Tailwind to Figma variables
 - **Push typography** from component styles to Figma text styles
 - **Verify documentation** matches actual variable values
-- Works seamlessly with figma-friend plugin
+
+**Validate (Quality Check):**
+- **Validate structure** - Primitive → Semantic → Responsive hierarchy
+- **Check naming** - Meaningful names, no appearance-based
+- **Verify modes** - Light/Dark separation, Desktop/Mobile
+- **Accessibility** - 16px baseline enforcement
 
 ## 📦 Installation
 
 ```bash
-npx skills add hansdesmedt/design-tokens-figma-sync
+npx skills add hansdesmedt/design-tokens-figma-toolkit
 ```
 
 ## 🚀 Quick Start
 
 ```bash
-# Sync everything at once
+# Sync to Figma
 /sync-colors       # Push colors to Figma
 /sync-typography   # Push text styles to Figma
 /sync-docs         # Verify documentation
 
-# Or use individually as needed
+# Validate structure
+/validate-tokens tokens.json
 ```
 
 ## 📋 Commands
+
+### `/validate-tokens`
+Validate token structure, naming, and best practices.
+
+**Input:** Token JSON file (from Figma, Style Dictionary, etc.)
+**Output:** Validation errors and warnings
+
+```bash
+/validate-tokens tokens.json
+```
+
+**Checks:**
+- ✅ Primitive → Semantic → Responsive hierarchy
+- ✅ Light/Dark mode separation (semantic-light + semantic-dark)
+- ✅ Desktop/Mobile separation (responsive-desktop + responsive-mobile)
+- ✅ No raw values in semantic tokens
+- ✅ Meaningful naming (not appearance-based)
+- ✅ 16px baseline for paragraph.md
 
 ### `/sync-colors`
 Extract colors from your codebase and create/update Figma color variables with Light/Dark modes.

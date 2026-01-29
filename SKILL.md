@@ -1,9 +1,9 @@
 ---
-name: design-tokens-figma-sync
-description: Sync design tokens between codebase and Figma. Push colors, typography, and verify documentation. Use when asked to "sync tokens to Figma", "update Figma colors", or "verify Figma docs".
+name: design-tokens-figma-toolkit
+description: Complete design tokens toolkit. Sync between codebase and Figma (colors, typography, docs) + validate token structure (Primitive→Semantic→Responsive hierarchy, naming conventions, 16px baseline). Use for "sync tokens", "validate tokens", "review token structure".
 metadata:
   author: hansdesmedt
-  version: "1.0.0"
+  version: "2.0.0"
   argument-hint: <command>
 ---
 
@@ -26,6 +26,78 @@ This skill provides commands to sync design tokens between your app codebase and
 - Figma file with variables/styles setup
 
 ## Commands
+
+### `/validate-tokens`
+
+Validate token structure and naming conventions for proper semantic hierarchy.
+
+**What it does:**
+1. Reads token JSON files (from Figma export, Style Dictionary, etc.)
+2. Validates Primitive → Semantic → Responsive hierarchy
+3. Checks Light/Dark mode separation
+4. Verifies naming conventions
+5. Enforces accessibility constraints (16px baseline)
+
+**Usage:**
+```
+/validate-tokens tokens.json
+```
+
+**Input format:**
+```json
+{
+  "primitive": {
+    "color": { "blue": { "500": { "value": "#3B82F6" } } }
+  },
+  "semantic-light": {
+    "color": { "text": { "primary": { "value": "{primitive.color.blue.500}" } } }
+  },
+  "semantic-dark": {
+    "color": { "text": { "primary": { "value": "{primitive.color.blue.300}" } } }
+  },
+  "responsive-desktop": {
+    "paragraph": { "md": { "fontSize": { "value": "{primitive.font.size.md}" } } }
+  },
+  "responsive-mobile": {
+    "paragraph": { "md": { "fontSize": { "value": "{primitive.font.size.md}" } } }
+  }
+}
+```
+
+**Validation Rules:**
+
+**Primitive Tokens:**
+- ✅ Must contain only raw values (`#3B82F6`, `16px`, `"Inter"`)
+- ❌ No aliases or references
+- ✅ Scale-based naming (`color.blue.500`, `spacing.4`)
+
+**Semantic Tokens:**
+- ✅ Must have separate `semantic-light` and `semantic-dark` sets
+- ✅ Must reference Primitive tokens only (`{primitive.color.blue.500}`)
+- ❌ No raw values in semantic tokens
+- ✅ Use meaningful names (`color.text.primary`, not `color.bluishGray`)
+- ❌ No component names (`color.buttonBackground` ❌, use `color.interactive.primary` ✅)
+
+**Responsive Tokens:**
+- ✅ Must have separate `responsive-desktop` and `responsive-mobile` sets
+- ✅ Both must have identical structure
+- ✅ Must reference Primitive typography tokens
+- ✅ `paragraph.md` fontSize MUST be 16px baseline
+
+**Output:**
+```
+✅ Primitive tokens: 42 valid
+❌ semantic-light:color.text.heading
+   Contains raw value "#3B82F6" - must reference primitive
+   Fix: "value": "{primitive.color.blue.500}"
+
+❌ semantic-dark missing
+   Must have semantic-dark token set alongside semantic-light
+
+✅ Responsive tokens: Desktop and Mobile sets match
+
+Summary: 2 errors, 1 warning
+```
 
 ### `/sync-colors`
 
