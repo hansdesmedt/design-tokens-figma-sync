@@ -26,24 +26,39 @@ npx skills add hansdesmedt/design-tokens-figma-toolkit
 ## 🚀 Quick Start
 
 ```bash
-# Sync to Figma
-/sync-colors       # Push colors to Figma
-/sync-typography   # Push text styles to Figma
-/sync-docs         # Verify documentation
+# 1. Push tokens from CODE → FIGMA
+/sync-colors       # CSS/Tailwind → Figma color variables
+/sync-typography   # Component styles → Figma text styles
 
-# Validate structure
-/validate-tokens tokens.json
+# 2. Update Figma docs (after variables changed)
+/sync-docs         # Figma variables → Figma documentation tables
+
+# 3. Quality check (export tokens.json first)
+/validate-tokens tokens.json  # Check structure & naming
 ```
+
+### Commands at a Glance
+
+| Command | Direction | What It Does |
+|---------|-----------|--------------|
+| `/sync-colors` | CODE → FIGMA | Push color definitions to Figma variables |
+| `/sync-typography` | CODE → FIGMA | Push text styles to Figma |
+| `/sync-docs` | FIGMA ↔ FIGMA | Sync Figma docs with Figma variables (after changes) |
+| `/validate-tokens` | EXPORT → CHECK | Validate token structure & naming (quality control) |
 
 ## 📋 Commands
 
 ### `/validate-tokens`
-Validate token structure, naming, and best practices.
+Validate token structure, naming, and best practices (quality check on exported tokens).
 
-**Input:** Token JSON file (from Figma, Style Dictionary, etc.)
+**Direction:** EXPORT → VALIDATE (external quality check)
+**Input:** Token JSON file exported from Figma (or Style Dictionary, etc.)
 **Output:** Validation errors and warnings
+**Use after:** Exporting tokens from Figma to ensure proper structure
 
 ```bash
+# 1. Export tokens.json from Figma
+# 2. Then validate:
 /validate-tokens tokens.json
 ```
 
@@ -56,8 +71,9 @@ Validate token structure, naming, and best practices.
 - ✅ 16px baseline for paragraph.md
 
 ### `/sync-colors`
-Extract colors from your codebase and create/update Figma color variables with Light/Dark modes.
+Extract colors from your codebase and **push to Figma** as color variables (Light/Dark modes).
 
+**Direction:** CODE → FIGMA
 **Input:** CSS variables, Tailwind config
 **Output:** Figma color variables organized by category
 
@@ -72,8 +88,9 @@ Variables → Primary → primary-500
 ```
 
 ### `/sync-typography`
-Extract text styles from components and create/update Figma text styles.
+Extract text styles from components and **push to Figma** as text styles.
 
+**Direction:** CODE → FIGMA
 **Input:** Component style files, CSS
 **Output:** Figma text styles with proper naming
 
@@ -87,51 +104,75 @@ Text Styles → Body/font-body-md
 ```
 
 ### `/sync-docs`
-Verify Figma documentation tables match actual variable values and fix mismatches.
+Verify Figma documentation tables match actual **Figma variable values** and fix mismatches.
 
-**Input:** Figma variables + documentation frames
-**Output:** Updated documentation with corrected values
+**Direction:** FIGMA VARIABLES → FIGMA DOCS (internal sync within Figma)
+**Input:** Figma variables + Figma documentation frames
+**Output:** Updated Figma documentation with corrected values
+**Use after:** Running `/sync-colors` or `/sync-typography` to update docs
 
 ```
-Variable:       color-text-title (Dark) = "neutral-white"
-Documentation:  color-text-title (Dark) = "neutral-black" ❌
-After sync:     color-text-title (Dark) = "neutral-white" ✅
+Figma Variable:     color-text-title (Dark) = "neutral-white"
+Figma Docs Table:   color-text-title (Dark) = "neutral-black" ❌
+After /sync-docs:   color-text-title (Dark) = "neutral-white" ✅
 ```
 
 ## 🔄 Complete Workflow
+
+### The Flow Explained
+
+```
+YOUR CODE (CSS/Tailwind)
+    ↓
+[/sync-colors, /sync-typography] ← Push to Figma
+    ↓
+FIGMA VARIABLES & TEXT STYLES
+    ↓
+[/sync-docs] ← Sync Figma docs with Figma variables (after changes)
+    ↓
+FIGMA DOCUMENTATION (updated)
+    ↓
+Export tokens.json
+    ↓
+[/validate-tokens] ← Quality check structure
+    ↓
+✅ Validated token hierarchy
+```
 
 ### Initial Setup
 
 ```bash
 # 1. Define tokens in your code
-# (CSS, Tailwind, component styles)
+# (CSS variables, Tailwind config, component styles)
 
-# 2. Sync to Figma
-/sync-colors
-/sync-typography
+# 2. Push tokens to Figma
+/sync-colors       # CODE → FIGMA (creates color variables)
+/sync-typography   # CODE → FIGMA (creates text styles)
 
-# 3. Create documentation in Figma
-# (Token tables showing Light/Dark values)
+# 3. Create documentation frames in Figma manually
+# (Token tables with columns: Token | Light | Dark)
 
-# 4. Verify everything matches
-/sync-docs
+# 4. Sync Figma docs with Figma variables
+/sync-docs         # FIGMA VARIABLES → FIGMA DOCS (fixes mismatches)
 
-# 5. Validate token structure (optional)
-npx skills add hansdesmedt/design-tokens-validator
-/review-tokens tokens.json
+# 5. Export tokens.json from Figma and validate structure
+/validate-tokens tokens.json  # Quality check: hierarchy, naming, 16px baseline
 ```
 
 ### Daily Development
 
 ```bash
-# Changed colors?
-/sync-colors
+# Updated colors in code?
+/sync-colors       # Push changes to Figma
+/sync-docs         # Update Figma documentation tables
 
-# Changed typography?
-/sync-typography
+# Updated typography in code?
+/sync-typography   # Push changes to Figma
+/sync-docs         # Update Figma documentation tables
 
-# Want to verify docs?
-/sync-docs
+# Want to validate token quality?
+# Export tokens.json from Figma, then:
+/validate-tokens tokens.json
 ```
 
 ## 📁 Project Structure
